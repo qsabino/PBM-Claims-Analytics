@@ -1,7 +1,7 @@
 # PBM Claims Analytics
 
 Analysis of Pharmacy Benefit Manager (PBM) claims data (75,000 claims across 50 clients). 
-Mirrors a real PBM Client Financial & Account Operations (CFAO) team run day to day: denial trends, SLA compliance, rebate performance, cost trend, and client risk segmentation.
+Mirrors a real PBM Client Financial Aanlysis and Optimization (CFAO) team run day to day: denial trends, SLA compliance, rebate performance, cost trend, and client risk segmentation.
 
 **This is v1: the Python analysis.** The same dataset and business questions will be re-run in PostgreSQL, Excel/Power Pivot, and Power BI in later versions, so the same findings can be compared across tools.
 
