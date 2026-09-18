@@ -18,12 +18,12 @@ Mirrors a real PBM Client Financial Aanlysis and Optimization (CFAO) team run da
 
 | Notebook | What it answers |
 |---|---|
-| [`01_data_validation.py`](python/01_data_validation.ipynb) | Load all 5 tables, confirm row counts, nulls, and key denial/turnaround figures. |
-| [`02_denial_analysis.py`](python/02_denial_analysis.ipynb) | Denial rate by client, tier, and reason; a proportion z-test separates real outlier clients from small-sample noise; denial reasons ranked by both volume and dollar exposure. |
-| [`03_pa_turnaround.py`](python/03_pa_turnaround.ipynb) | PA turnaround distribution (mean vs. median), urgent vs. standard requests, and SLA breach detection — including why raw breach rates must be compared within SLA tier, not across the whole book. |
-| [`04_rebate_analysis.py`](python/04_rebate_analysis.ipynb) | Rebate capture rate (actual vs. contract-target) by tier and by client, the total dollar gap, and why capture-rate variance shrinks with claim volume. |
-| [`05_cost_trend_pmpm.py`](python/05_cost_trend_pmpm.ipynb) | Per-member-per-month (PMPM) cost trend, cost breakdown by drug tier, client-level trend-slope fitting, and a drill-down into what's actually driving the fastest-rising clients' costs. |
-| [`06_client_segmentation.py`](python/06_client_segmentation.ipynb) | KMeans clustering on four client-level metrics to segment "healthy" vs. "at-risk" accounts, validated against the known outlier clients. |
+| [`01_data_validation.py`](python/01_data_validation.py) | Load all 5 tables, confirm row counts, nulls, and key denial/turnaround figures. |
+| [`02_denial_analysis.py`](python/02_denial_analysis.py) | Denial rate by client, tier, and reason; a proportion z-test separates real outlier clients from small-sample noise; denial reasons ranked by both volume and dollar exposure. |
+| [`03_pa_turnaround.py`](python/03_pa_turnaround.py) | PA turnaround distribution (mean vs. median), urgent vs. standard requests, and SLA breach detection — including why raw breach rates must be compared within SLA tier, not across the whole book. |
+| [`04_rebate_analysis.py`](python/04_rebate_analysis.py) | Rebate capture rate (actual vs. contract-target) by tier and by client, the total dollar gap, and why capture-rate variance shrinks with claim volume. |
+| [`05_cost_trend_pmpm.py`](python/05_cost_trend_pmpm.py) | Per-member-per-month (PMPM) cost trend, cost breakdown by drug tier, client-level trend-slope fitting, and a drill-down into what's actually driving the fastest-rising clients' costs. |
+| [`06_client_segmentation.py`](python/06_client_segmentation.py) | KMeans clustering on four client-level metrics to segment "healthy" vs. "at-risk" accounts, validated against the known outlier clients. |
 
 Each notebook is self-contained — running `01` isn't required before `02`
 
