@@ -7,7 +7,7 @@ Mirrors a real PBM Client Financial Aanlysis and Optimization (CFAO) team run da
 
 **v2: the PostgreSQL analysis.**
 
-**v3: Excel reference.** Covers Power Query import, Power Pivot relationships, DAX measures, and dashboard build-out.
+**v3: Excel reference.** Covers Power Query import, Power Pivot relationships, DAX measures, and interactive dashboard build-out.
 The same dataset and business questions will be re-run Power BI in later versions, so the same findings can be compared across tools.
 
 **v1.2: Added machine learning layer in scikit-learn.** A classification model to predict claim denial risk and a regression model to estimate claim amounts. Moth models evaluated with standard metrics.
@@ -37,6 +37,8 @@ Each notebook is self-contained — running `01` isn't required before `02`
 ## Tech stack
 
 Python, pandas, numpy, matplotlib, scikit-learn (StandardScaler, KMeans, PCA, silhouette_score), VS Code.
+PostgreSQL
+Power Query, Power Pivot relationships, DAX measures, and interactive dashboard build-out.
 
 ## Roadmap
 
