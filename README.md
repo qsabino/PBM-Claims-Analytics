@@ -34,14 +34,17 @@ Python, pandas, numpy, matplotlib, scikit-learn (StandardScaler, KMeans, PCA, si
 ## Roadmap
 
 - [x] Python analysis (this version)
-- [ ] PostgreSQL — same five business questions, written as SQL (window functions, CTEs), against a real relational schema
-- [ ] Excel / Power Pivot — DAX measures for the same KPIs
+- [x] PostgreSQL — same five business questions, written as SQL (window functions, CTEs), against a real relational schema
+- [x] Excel / Power Pivot — DAX measures for the same KPIs
 - [ ] Power BI — client-facing dashboard built on the same model
 - [ ] `tool_comparison.md` — notes on where each tool was the easier or harder way to answer the same question
 
-**What's actually driving the top reliable clients?**
-<Figure size 1500x400 with 3 Axes><img width="1489" height="390" alt="image" src="https://github.com/user-attachments/assets/7f92cb06-9e83-46da-841a-4f9b86dce6a3" />
 
 
 **Visualizing client segmentation.**
 <Figure size 700x600 with 1 Axes><img width="690" height="590" alt="image" src="https://github.com/user-attachments/assets/862d3347-ae19-4595-9fe3-f7e4d9cc3ffd" />
+
+
+
+**Excel reference**
+<img width="1920" height="1032" alt="image" src="https://github.com/user-attachments/assets/35a80d1a-9477-442d-94a5-8f2b1a94bb7e" />
