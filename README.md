@@ -3,10 +3,13 @@
 Analysis of Pharmacy Benefit Manager (PBM) claims data (75,000 claims across 50 clients). 
 Mirrors a real PBM Client Financial Aanlysis and Optimization (CFAO) team run day to day: denial trends, SLA compliance, rebate performance, cost trend, and client risk segmentation.
 
-**v1: the Python analysis.** 
+**v1: the Python analysis.**
+
 **v2: the PostgreSQL analysis.**
+
 **v3: Excel reference.** Covers Power Query import, Power Pivot relationships, DAX measures, and dashboard build-out.
 The same dataset and business questions will be re-run Power BI in later versions, so the same findings can be compared across tools.
+
 **v1.2: Added machine learning layer in scikit-learn.** A classification model to predict claim denial risk and a regression model to estimate claim amounts. Moth models evaluated with standard metrics.
 
 ## Key findings
