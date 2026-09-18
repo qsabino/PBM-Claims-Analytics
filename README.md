@@ -37,7 +37,9 @@ Each notebook is self-contained — running `01` isn't required before `02`
 ## Tech stack
 
 Python, pandas, numpy, matplotlib, scikit-learn (StandardScaler, KMeans, PCA, silhouette_score), VS Code.
-PostgreSQL
+
+PostgreSQL.
+
 Power Query, Power Pivot relationships, DAX measures, and interactive dashboard build-out.
 
 ## Roadmap
