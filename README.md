@@ -57,5 +57,10 @@ Power Query, Power Pivot relationships, DAX measures, and interactive dashboard 
 
 
 
+**scikit-learn layer added**
+<img width="1090" height="440" alt="image" src="https://github.com/user-attachments/assets/19ee21a3-45df-4f40-ba64-96421ce06e23" />
+
+
+
 **Excel reference**
 <img width="1920" height="1032" alt="image" src="https://github.com/user-attachments/assets/35a80d1a-9477-442d-94a5-8f2b1a94bb7e" />
