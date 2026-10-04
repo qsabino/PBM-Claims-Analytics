@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
 from sklearn.dummy import DummyClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
@@ -168,9 +169,40 @@ print(classification_report(y_test, rf_pred, zero_division=0))
 
 
 # %%
+# Model 3: XGBoost
+# scale_pos_weight is XGBoost's version of class_weight="balanced": 
+# it's set to the ratio of negative to positive cases, 
+# so the model is penalized more for missing a denial than for misclassifying a routine claim.
+
+scale_pos_weight = (y_train == 0).sum() / (y_train == 1).sum()
+print(f"scale_pos_weight: {scale_pos_weight:.2f}")
+
+xgb = XGBClassifier(
+    n_estimators=300, max_depth=4, learning_rate=0.05,
+    scale_pos_weight=scale_pos_weight, eval_metric="logloss",
+    random_state=RANDOM_STATE, n_jobs=-1
+)
+xgb.fit(X_train, y_train)
+
+xgb_proba = xgb.predict_proba(X_test)[:, 1]
+xgb_pred = xgb.predict(X_test)
+
+print(f"ROC-AUC: {roc_auc_score(y_test, xgb_proba):.3f}")
+print(classification_report(y_test, xgb_pred, zero_division=0))
+
+# Observation: XGBoost lands the same ROC-AUC as logistic regression and random forest, about 0.70
+# A more sophisticated algorithm does not move the ceiling.
+# This is the point where further model tuning stops being the right use of time, 
+# and the conversation shifts to whether better features (not better models) could close the gap.
+
+
+#===========================================================================
+
+
+# %%
 # Confusion matrices, side by side
 
-fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
+fig, axes = plt.subplots(1, 3, figsize=(15, 4.5))
 
 ConfusionMatrixDisplay.from_predictions(
     y_test, logreg_pred, ax=axes[0], colorbar=False,
@@ -184,6 +216,12 @@ ConfusionMatrixDisplay.from_predictions(
 )
 axes[1].set_title("Random Forest")
 
+ConfusionMatrixDisplay.from_predictions(
+    y_test, xgb_pred, ax=axes[2], colorbar=False,
+    display_labels=["Not denied", "Denied"]
+)
+axes[2].set_title("XGBoost")
+
 plt.tight_layout()
 plt.show()
 
@@ -195,7 +233,13 @@ plt.show()
 # ROC and Precision-Recall curves
 fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
 
-for name, proba in [("Logistic Regression", logreg_proba), ("Random Forest", rf_proba)]:
+models = [
+    ("Logistic Regression", logreg_proba),
+    ("Random Forest", rf_proba),
+    ("XGBoost", xgb_proba),
+]
+
+for name, proba in models:
     fpr, tpr, _ = roc_curve(y_test, proba)
     axes[0].plot(fpr, tpr, label=name)
 axes[0].plot([0, 1], [0, 1], "k--", alpha=0.4, label="Random guess")
@@ -204,7 +248,7 @@ axes[0].set_ylabel("True Positive Rate")
 axes[0].set_title("ROC Curve")
 axes[0].legend()
 
-for name, proba in [("Logistic Regression", logreg_proba), ("Random Forest", rf_proba)]:
+for name, proba in models:
     prec, rec, _ = precision_recall_curve(y_test, proba)
     axes[1].plot(rec, prec, label=name)
 axes[1].axhline(y_test.mean(), color="k", linestyle="--", alpha=0.4, label="Random guess")
@@ -222,19 +266,24 @@ plt.show()
 
 # %%
 # 5-fold cross-validation on the training set, using ROC-AUC as the scoring metric
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
 
 cv_pipeline = Pipeline([
     ("scale", StandardScaler()),
     ("clf", LogisticRegression(class_weight="balanced", max_iter=1000, random_state=RANDOM_STATE)),
 ])
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
-cv_scores = cross_val_score(cv_pipeline, X_train, y_train, cv=cv, scoring="roc_auc")
+cv_scores_logreg = cross_val_score(cv_pipeline, X_train, y_train, cv=cv, scoring="roc_auc")
 
-print(f"CV ROC-AUC per fold: {cv_scores.round(3)}")
-print(f"Mean: {cv_scores.mean():.3f}  |  Std: {cv_scores.std():.3f}")
+cv_scores_xgb = cross_val_score(xgb, X_train, y_train, cv=cv, scoring="roc_auc")
 
-# Observation: Standard deviation under 0.01 across folds
-# --> this is a stable result, not a lucky split.
+print(f"Logistic Regression — CV ROC-AUC per fold: {cv_scores_logreg.round(3)}")
+print(f"  Mean: {cv_scores_logreg.mean():.3f}  |  Std: {cv_scores_logreg.std():.3f}")
+print()
+print(f"XGBoost — CV ROC-AUC per fold: {cv_scores_xgb.round(3)}")
+print(f"  Mean: {cv_scores_xgb.mean():.3f}  |  Std: {cv_scores_xgb.std():.3f}")
+
+# Observation: Both models land within 0.01 standard deviation across folds
+# --> a stable result for both, not a lucky split for either one.
 
 
 #===========================================================================
@@ -243,7 +292,10 @@ print(f"Mean: {cv_scores.mean():.3f}  |  Std: {cv_scores.std():.3f}")
 # %%
 # What's actually driving the predictions?
 
-importances = pd.Series(rf.feature_importances_, index=X_train.columns).sort_values(ascending=False)
+rf_importances = pd.Series(rf.feature_importances_, index=X_train.columns, name="Random Forest")
+xgb_importances = pd.Series(xgb.feature_importances_, index=X_train.columns, name="XGBoost")
+
+importances = pd.concat([rf_importances, xgb_importances], axis=1).sort_values("Random Forest", ascending=False)
 importances
 
 
@@ -252,12 +304,22 @@ importances
 
 # %%
 # Importance visualization
-fig, ax = plt.subplots(figsize=(7, 5))
-importances.head(8).sort_values().plot(kind="barh", ax=ax, color="steelblue")
-ax.set_xlabel("Feature importance")
-ax.set_title("Random Forest — top predictors of denial")
+fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
+
+importances["Random Forest"].sort_values().tail(8).plot(kind="barh", ax=axes[0], color="#4C72B0")
+axes[0].set_title("Random Forest")
+axes[0].set_xlabel("Feature importance")
+
+importances["XGBoost"].sort_values().tail(8).plot(kind="barh", ax=axes[1], color="#55A868")
+axes[1].set_title("XGBoost")
+axes[1].set_xlabel("Feature importance")
+
+fig.suptitle("Top predictors of denial — Random Forest vs. XGBoost")
 plt.tight_layout()
 plt.show()
+
+# Oservation: two structurally different algorithms agreeing on what matters, 
+# on top of already agreeing on how well it can be predicted
 
 
 #===========================================================================
@@ -273,8 +335,9 @@ summary = pd.DataFrame({
         "Baseline recall on denied class",
         "Logistic Regression ROC-AUC",
         "Random Forest ROC-AUC",
-        "5-fold CV ROC-AUC (mean ± std)",
-        "Top predictor (RF feature importance)",
+        "XGBoost ROC-AUC",
+        "XGBoost 5-fold CV ROC-AUC (mean \u00b1 std)",
+        "Top predictor (agrees across RF and XGBoost)",
     ],
     "value": [
         f"{df['denied'].mean():.1%}",
@@ -282,8 +345,9 @@ summary = pd.DataFrame({
         "0.0%",
         f"{roc_auc_score(y_test, logreg_proba):.3f}",
         f"{roc_auc_score(y_test, rf_proba):.3f}",
-        f"{cv_scores.mean():.3f} ± {cv_scores.std():.3f}",
-        importances.index[0],
+        f"{roc_auc_score(y_test, xgb_proba):.3f}",
+        f"{cv_scores_xgb.mean():.3f} \u00b1 {cv_scores_xgb.std():.3f}",
+        importances["Random Forest"].idxmax(),
     ],
 })
 summary
