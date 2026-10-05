@@ -40,9 +40,9 @@ Each notebook is self-contained — running `01` isn't required before `02`
 
 ## PostgreSQL
 
-- Creates the matching Postgres schema with load instructions.
-- 4 query files (denial_rate.sql, pa_sla_breach.sql, rebate_capture.sql, pmpm_trend.sql) reproducing the same findings as the Python notebooks.
-- client_summary_view.sql is a single reusable view rolling up denial, SLA, rebate, and PMPM metrics per client.
+- 01_schema.sql creates the matching Postgres schema with load instructions
+- Four query files (02_denial_rate.sql, 03_pa_turnaround.sql, 04_rebateanalysis.sql, 05_cost_trend_pmpm.sql) reproducing the same findings as the Python notebooks.
+- 06_client_summary.sql is a single reusable view rolling up denial, SLA, rebate, and PMPM metrics per client.
 
 ## Excel
 
